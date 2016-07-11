@@ -15,6 +15,7 @@
         android:scaleType="centerInside" />
 
     <LinearLayout
+        android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginLeft="40dp"
@@ -87,7 +88,7 @@
             android:id="@+id/login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="40dp"
             android:background="@drawable/login_btn_selector"
             android:padding="8dp"
             android:text="登 录"
@@ -100,8 +101,8 @@
         android:id="@+id/register"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:gravity="center"
-        android:textSize="18sp"
         android:background="@drawable/register_btn_selector"
-        android:text="没有账号?点我注册" />
+        android:gravity="center"
+        android:text="没有账号?点我注册"
+        android:textSize="16sp" />
 </LinearLayout>

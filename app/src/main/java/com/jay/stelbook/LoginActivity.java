@@ -7,7 +7,9 @@ import android.os.Bundle;
 import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -56,6 +58,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         SpannableString spannableString = new SpannableString("没有账号?点我注册");
         spannableString.setSpan(new ForegroundColorSpan(0xffa2a2a2), 0, 5, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         spannableString.setSpan(new ForegroundColorSpan(0xff5856d6), 5, 9, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannableString.setSpan(new StyleSpan(android.graphics.Typeface.ITALIC), 0, 9, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
         mRegister.setText(spannableString);
         //初始化等待对话框
         mProDialog = new ACProgressFlower.Builder(this)
@@ -101,7 +104,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
             @Override
             public void done(BmobUser bmobUser, BmobException e) {
                 if (e == null) {
-                    Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(intent);
                     finish();
                 } else {

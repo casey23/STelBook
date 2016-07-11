@@ -29,4 +29,6 @@ dependencies {
     compile 'cn.bmob.android:bmob-sdk:3.5.0'
     compile 'cc.cloudist.acplibrary:library:1.2.1'
     compile 'com.android.support:support-v4:23.1.1'
+    compile project(':sliding_menu')
+    compile 'de.hdodenhof:circleimageview:2.1.0'
 }

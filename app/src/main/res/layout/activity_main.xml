@@ -23,9 +23,11 @@
             android:gravity="center_vertical">
 
             <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:id="@+id/menu"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
                 android:background="@drawable/register_btn_selector"
+                android:clickable="true"
                 android:src="@drawable/menu" />
 
             <TextView
@@ -40,34 +42,35 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="90dp"
             android:layout_alignParentBottom="true"
-            android:gravity="center_vertical"
-            android:paddingLeft="20dp"
             android:background="#60000000"
-            android:orientation="vertical">
+            android:gravity="center_vertical|right"
+            android:orientation="vertical"
+            android:paddingRight="30dp">
 
             <TextView
 
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="上次备份时间"
-                android:textSize="20sp"
-                android:textColor="@android:color/white" />
+                android:textColor="@android:color/white"
+                android:textSize="18sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
                 android:text="2016/7/11"
-                android:textSize="35sp"
-                android:textColor="@android:color/white" />
+                android:textColor="@android:color/white"
+                android:textSize="28sp" />
 
         </LinearLayout>
     </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="110dp"
+        android:layout_height="120dp"
         android:background="#eeeeee"
         android:gravity="center"
         android:orientation="horizontal">
@@ -80,9 +83,11 @@
             android:orientation="vertical">
 
             <ImageView
+                android:id="@+id/upload"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:background="@drawable/circular_btn_selector"
+                android:clickable="true"
                 android:padding="10dp"
                 android:src="@drawable/upload" />
 
@@ -90,6 +95,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:clickable="true"
                 android:text="备份到网络" />
 
         </LinearLayout>
@@ -109,9 +115,11 @@
             android:orientation="vertical">
 
             <ImageView
+                android:id="@+id/download"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:background="@drawable/circular_btn_selector"
+                android:clickable="true"
                 android:padding="15dp"
                 android:src="@drawable/download" />
 
