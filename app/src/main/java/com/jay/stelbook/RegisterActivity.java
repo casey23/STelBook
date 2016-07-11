@@ -1,6 +1,7 @@
 package com.jay.stelbook;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Html;
@@ -8,6 +9,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.jay.util.CipherUtils;
 
 import cc.cloudist.acplibrary.ACProgressBaseDialog;
 import cc.cloudist.acplibrary.ACProgressConstant;
@@ -96,13 +99,15 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
         BmobUser user = new BmobUser();
         user.setUsername(userName);
         user.setEmail(mail);
-        user.setPassword(psw);
+        user.setPassword(CipherUtils.md5(CipherUtils.md5(psw)));
         mProDialog.show();
         user.signUp(new SaveListener<BmobUser>() {
             @Override
             public void done(BmobUser bmobUser, BmobException e) {
                 if (e == null) {
-                    showToast("注册成功");
+                    Intent intent = new Intent(RegisterActivity.this,MainActivity.class);
+                    startActivity(intent);
+                    finish();
                 } else {
                     StringBuffer sb = new StringBuffer("注册失败。" + e.getMessage() + e.getErrorCode());
                     //用户名已经存在

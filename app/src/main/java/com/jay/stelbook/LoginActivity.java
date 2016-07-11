@@ -14,6 +14,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.jay.util.CipherUtils;
+
 import cc.cloudist.acplibrary.ACProgressBaseDialog;
 import cc.cloudist.acplibrary.ACProgressConstant;
 import cc.cloudist.acplibrary.ACProgressFlower;
@@ -70,7 +72,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                 login();
                 break;
             case R.id.register:
-                Intent intent = new Intent(LoginActivity.this,RegisterActivity.class);
+                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
                 startActivity(intent);
                 break;
         }
@@ -92,13 +94,16 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         }
         BmobUser user = new BmobUser();
         user.setUsername(userName);
-        user.setPassword(password);
+        //密码使用两次MD5加密
+        user.setPassword(CipherUtils.md5(CipherUtils.md5(password)));
         mProDialog.show();
         user.login(new SaveListener<BmobUser>() {
             @Override
             public void done(BmobUser bmobUser, BmobException e) {
                 if (e == null) {
-                    showToast("登录成功");
+                    Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+                    startActivity(intent);
+                    finish();
                 } else {
                     showToast("用户名或密码错误，登录失败");
                 }
