@@ -16,11 +16,21 @@
 package com.jay.util;
 
 import android.Manifest;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
+import android.provider.ContactsContract;
 import android.support.v4.app.ActivityCompat;
+
+import com.jay.javaBean.Contacts;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import cn.bmob.v3.BmobObject;
 
 /**
  * 手机组件调用工具类
@@ -71,11 +81,45 @@ public final class PhoneUtil {
         //检查是否可以直接拨号，如果没有直接拨号的权限
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
             intent = new Intent(Intent.ACTION_DIAL, uri);
-        }else {
+        } else {
             intent = new Intent(Intent.ACTION_CALL, uri);
         }
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
+    }
+
+    /**
+     * 获取所有联系人信息（姓名+电话）
+     */
+    public static List<BmobObject> getAllContacts(Context context) {
+        ContentResolver resolver = context.getContentResolver();
+        Cursor cursor = resolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
+        ArrayList<BmobObject> contactses = new ArrayList<BmobObject>();
+        while (cursor.moveToNext()) {
+
+            //获得联系人ID
+            String id = cursor.getString(cursor.getColumnIndex(android.provider.ContactsContract.Contacts._ID));
+            //获得联系人姓名
+            String name = cursor.getString(cursor.getColumnIndex(android.provider.ContactsContract.Contacts.DISPLAY_NAME));
+            //获得联系人手机号码
+            Cursor phone = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
+                    ContactsContract.CommonDataKinds.Phone.CONTACT_ID + "=" + id, null, null);
+
+            ArrayList<String> tels = new ArrayList<String>();
+            //取得电话号码(可能存在多个号码)
+            while (phone.moveToNext()) {
+                int phoneFieldColumnIndex = phone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+                String phoneNumber = phone.getString(phoneFieldColumnIndex);
+                tels.add(phoneNumber);
+            }
+            phone.close();
+            Contacts contacts = new Contacts();
+            contacts.setName(name);
+            contacts.setTel(tels);
+            contactses.add(contacts);
+        }
+        cursor.close();
+        return contactses;
     }
 
 }
