@@ -43,6 +43,9 @@
         <activity
             android:name=".ModifyActivity"
             android:theme="@android:style/Theme.Light.NoTitleBar" />
+        <activity
+            android:name=".TimelineActivity"
+            android:theme="@android:style/Theme.Light.NoTitleBar" />
     </application>
 
 </manifest>
