@@ -58,10 +58,11 @@
                 android:textSize="18sp" />
 
             <TextView
+                android:id="@+id/lastUploadTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text="2016/7/11"
+                android:text="您暂无备份记录"
                 android:textColor="@android:color/white"
                 android:textSize="28sp" />
 

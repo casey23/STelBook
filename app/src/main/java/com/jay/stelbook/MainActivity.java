@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -17,9 +18,12 @@ import com.jay.javaBean.Developer;
 import com.jay.javaBean.Version;
 import com.jay.util.DoubleClickExitHelper;
 import com.jay.util.PhoneUtil;
+import com.jay.util.SharedPreferencesUtil;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingActivity;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import cc.cloudist.acplibrary.ACProgressBaseDialog;
@@ -45,6 +49,7 @@ public class MainActivity extends SlidingActivity implements View.OnClickListene
     private ImageView mSlidingMenu;
     private ImageView mUpload;
     private ImageView mDownload;
+    private TextView mLastUploadTime;
     //侧滑菜单控件
     private TextView mPerson;
     private TextView mCancel;
@@ -76,7 +81,7 @@ public class MainActivity extends SlidingActivity implements View.OnClickListene
         mAboutMe = (TextView) findViewById(R.id.about);
         mFeedBack = (TextView) findViewById(R.id.feedback);
         mUserIcon = (CircleImageView) findViewById(R.id.userIcon);
-
+        mLastUploadTime = (TextView) findViewById(R.id.lastUploadTime);
         //控件点击事件监听
         mSlidingMenu.setOnClickListener(this);
         mUpload.setOnClickListener(this);
@@ -88,6 +93,40 @@ public class MainActivity extends SlidingActivity implements View.OnClickListene
         mFeedBack.setOnClickListener(this);
         mUserIcon.setOnClickListener(this);
 
+        initProDlg();
+        initSlidingMenu();
+        initLastUploadTime();
+
+        //初始化双击退出对象
+        doubleClickExitHelper = new DoubleClickExitHelper(this);
+    }
+
+    /**
+     * 初始化上次备份时间
+     */
+    private void initLastUploadTime() {
+        // SharedPreferencesUtil.put(this,"lastUploadTime",);
+        String lastUploadTime = (String) SharedPreferencesUtil.get(this, "lastUploadTime", "");
+        if (!"".equals(lastUploadTime)) {
+            mLastUploadTime.setText(lastUploadTime);
+        }
+    }
+
+    /**
+     * 存储上次备份时间，当点击上传备份以后，如果备份成功，则调用此函数
+     */
+    private void saveUploadTime() {
+        Date date = new Date();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd");
+        String lastUploadTime = simpleDateFormat.format(date);
+        mLastUploadTime.setText(lastUploadTime);
+        SharedPreferencesUtil.put(this, "lastUploadTime", lastUploadTime);
+    }
+
+    /**
+     * 初始化等待对话框
+     */
+    private void initProDlg() {
         //初始化等待对话框
         mProDialog = new ACProgressFlower.Builder(this)
                 .direction(ACProgressConstant.DIRECT_CLOCKWISE)
@@ -95,7 +134,12 @@ public class MainActivity extends SlidingActivity implements View.OnClickListene
                 .text("正在处理...")
                 .fadeColor(Color.DKGRAY).build();
         mProDialog.setCanceledOnTouchOutside(false);
+    }
 
+    /**
+     * 初始化侧滑菜单
+     */
+    private void initSlidingMenu() {
         //初始化侧滑菜单 SlidingMenu
         mMenu = getSlidingMenu();
         mMenu.setMode(SlidingMenu.LEFT);
@@ -109,8 +153,6 @@ public class MainActivity extends SlidingActivity implements View.OnClickListene
         mMenu.setFadeDegree(0.5f);
         // 设置淡入淡出效果
         mMenu.setFadeEnabled(true);
-        //初始化双击退出对象
-        doubleClickExitHelper = new DoubleClickExitHelper(this);
     }
 
     /**
@@ -141,8 +183,10 @@ public class MainActivity extends SlidingActivity implements View.OnClickListene
             //修改用户头像
             case R.id.userIcon:
                 break;
-            //个人信息
+            //修改密码
             case R.id.person:
+                Intent intent = new Intent(this, ModifyActivity.class);
+                startActivity(intent);
                 break;
             //退出登录
             case R.id.cancel:
@@ -164,10 +208,13 @@ public class MainActivity extends SlidingActivity implements View.OnClickListene
     }
 
     /**
-     * 显示关于我的信息
+     * 显示关于我的信息,打开网站的留言板
      */
     private void showMe() {
-
+        String url = "http://www.27house.cn/note/";
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(url));
+        startActivity(intent);
     }
 
     /**
@@ -218,6 +265,8 @@ public class MainActivity extends SlidingActivity implements View.OnClickListene
                                     Log.i("ttt", "数据批量添加失败：" + ex.getMessage() + "," + ex.getErrorCode());
                                 }
                             }
+                            //存储备份时间
+                            saveUploadTime();
                             showToast("数据备份成功!");
                         } else {
                             showToast("数据备份失败!");
