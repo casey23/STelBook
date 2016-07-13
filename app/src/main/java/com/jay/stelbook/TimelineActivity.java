@@ -7,7 +7,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -41,6 +43,8 @@ public class TimelineActivity extends Activity {
     private List<Version> mVersionList;
     //联系人总数
     private int mCount;
+    //返回按钮
+    private ImageView mBack;
     //适配器
     private MyAdapter mAdapter;
 
@@ -59,6 +63,13 @@ public class TimelineActivity extends Activity {
         mBackupCount = (TextView) findViewById(R.id.backupCount);
         mContactCount = (TextView) findViewById(R.id.contactCount);
         mBackupList = (ListView) findViewById(R.id.backupList);
+        mBack = (ImageView) findViewById(R.id.back);
+        mBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
         //ListView设置空视图
         mBackupList.setEmptyView(findViewById(R.id.emptyView));
         //初始化等待对话框
@@ -108,7 +119,7 @@ public class TimelineActivity extends Activity {
         //显示本地联系人总数
         mContactCount.setText(String.format(mContactCount.getText().toString(), mCount));
         //设置适配器
-        mAdapter = new MyAdapter(this, mVersionList, R.layout.timeline_item_layout);
+        mAdapter = new MyAdapter(this, mBackupList, mVersionList, R.layout.timeline_item_layout);
         mBackupList.setAdapter(mAdapter);
     }
 
@@ -116,15 +127,18 @@ public class TimelineActivity extends Activity {
     /**
      * ListView的适配器
      */
-    private class MyAdapter extends BaseAdapter {
+    private class MyAdapter extends BaseAdapter implements AdapterView.OnItemClickListener {
+        private ListView mListView;
         private List<Version> mVersionList;
         private int mLayoutId;
         private Context mContext;
 
-        public MyAdapter(Context context, List<Version> versionList, int layoutId) {
+        public MyAdapter(Context context, ListView listView, List<Version> versionList, int layoutId) {
             this.mContext = context;
+            mListView = listView;
             this.mVersionList = versionList;
             this.mLayoutId = layoutId;
+            mListView.setOnItemClickListener(this);
         }
 
         @Override
@@ -150,8 +164,7 @@ public class TimelineActivity extends Activity {
                 convertView = View.inflate(mContext, mLayoutId, null);
             }
             TextView year = ViewHolder.get(convertView, R.id.year);
-            TextView mouth = ViewHolder.get(convertView, R.id.mouth);
-            TextView day = ViewHolder.get(convertView, R.id.day);
+            TextView mouthAndDay = ViewHolder.get(convertView, R.id.mouthAndDay);
             TextView hour = ViewHolder.get(convertView, R.id.hour);
             TextView amOrPm = ViewHolder.get(convertView, R.id.pmOrAm);
             TextView backupContactsNo = ViewHolder.get(convertView, R.id.backupContactsNo);
@@ -169,12 +182,16 @@ public class TimelineActivity extends Activity {
             calendar.setTime(date);
             //...............................
             year.setText(calendar.get(Calendar.YEAR) + "");
-            mouth.setText(calendar.get(Calendar.MONTH) + "");
-            day.setText(calendar.get(Calendar.DAY_OF_MONTH) + "月");
+            mouthAndDay.setText((calendar.get(Calendar.MONTH) + 1) + "." + calendar.get(Calendar.DAY_OF_MONTH));
             hour.setText(calendar.get(Calendar.HOUR) + ":" + calendar.get(Calendar.MINUTE));
             amOrPm.setText(calendar.get(Calendar.AM_PM) == 1 ? "pm" : "am");
             backupContactsNo.setText(String.format("可还原联系人:%d", version.getCount()));
             return convertView;
+        }
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
         }
     }
 }
