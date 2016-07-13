@@ -36,8 +36,8 @@
         android:paddingLeft="10dp">
 
         <ImageView
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:layout_margin="10dp"
             android:src="@drawable/person_icon" />
 
@@ -48,26 +48,54 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/backupCount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="你拥有10个备份"
+                android:text="您拥有%d个备份"
                 android:textColor="@android:color/white"
-                android:textSize="21sp" />
+                android:textSize="20sp" />
 
             <TextView
+                android:id="@+id/contactCount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text="本地联系人:156"
+                android:text="本地联系人:%d"
                 android:textColor="@android:color/white"
-                android:textSize="15sp" />
+                android:textSize="14sp" />
         </LinearLayout>
     </LinearLayout>
 
     <ListView
+        android:id="@+id/backupList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#e6e7ec">
 
     </ListView>
+
+    <!--空视图布局-->
+    <LinearLayout
+        android:id="@+id/emptyView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#e6e7ec"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingTop="100dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/notfound" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:text="您好像还没有创建备份"
+            android:textColor="#8e8d8d"
+            android:textSize="20sp" />
+    </LinearLayout>
 </LinearLayout>

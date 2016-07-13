@@ -122,4 +122,18 @@ public final class PhoneUtil {
         return contactses;
     }
 
+    /**
+     * 返回联系人总数
+     *
+     * @param context 上下文对象
+     * @return 返回联系人总数
+     */
+    public static int getContactsCount(Context context) {
+        ContentResolver resolver = context.getContentResolver();
+        Cursor cursor = resolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
+        int count = cursor.getCount();
+        cursor.close();
+        return count;
+    }
+
 }
