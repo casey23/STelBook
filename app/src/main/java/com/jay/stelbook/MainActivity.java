@@ -178,15 +178,17 @@ public class MainActivity extends SlidingActivity implements View.OnClickListene
                 break;
             //同步通讯录到本地
             case R.id.download:
-
+                Intent intent = new Intent(this, TimelineActivity.class);
+                startActivity(intent);
                 break;
             //修改用户头像
             case R.id.userIcon:
                 break;
             //修改密码
-            case R.id.person:
-                Intent intent = new Intent(this, ModifyActivity.class);
-                startActivity(intent);
+            case R.id.person: {
+                Intent intent2 = new Intent(this, ModifyActivity.class);
+                startActivity(intent2);
+            }
                 break;
             //退出登录
             case R.id.cancel:
@@ -241,14 +243,17 @@ public class MainActivity extends SlidingActivity implements View.OnClickListene
         mProDialog.show();
         //不准连续点击
         mUpload.setClickable(false);
+        //获取所有联系人数据
+        final List<BmobObject> contactsList = PhoneUtil.getAllContacts(MainActivity.this);
         Version version = new Version();
+        //设置版本库基本信息
         version.setUser_id((String) BmobUser.getObjectByKey("objectId"));
+        version.setCount(contactsList.size());
         version.save(new SaveListener<String>() {
             //版本号存储成功
             @Override
             public void done(String objectId, BmobException e) {
-                //获取所有联系人数据
-                List<BmobObject> contactsList = PhoneUtil.getAllContacts(MainActivity.this);
+
                 for (BmobObject contacts : contactsList) {
                     ((Contacts) contacts).setVersionid(objectId);
                 }

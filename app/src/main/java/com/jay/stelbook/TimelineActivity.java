@@ -13,7 +13,12 @@ import android.widget.TextView;
 
 import com.jay.javaBean.Version;
 import com.jay.util.PhoneUtil;
+import com.jay.util.ViewHolder;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import cc.cloudist.acplibrary.ACProgressBaseDialog;
@@ -144,6 +149,31 @@ public class TimelineActivity extends Activity {
             if (convertView == null) {
                 convertView = View.inflate(mContext, mLayoutId, null);
             }
+            TextView year = ViewHolder.get(convertView, R.id.year);
+            TextView mouth = ViewHolder.get(convertView, R.id.mouth);
+            TextView day = ViewHolder.get(convertView, R.id.day);
+            TextView hour = ViewHolder.get(convertView, R.id.hour);
+            TextView amOrPm = ViewHolder.get(convertView, R.id.pmOrAm);
+            TextView backupContactsNo = ViewHolder.get(convertView, R.id.backupContactsNo);
+
+            //将版本库的创建时间转为date对象然后转为Calendar
+            String at = version.getCreatedAt();
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date date = null;
+            try {
+                date = simpleDateFormat.parse(at);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            //...............................
+            year.setText(calendar.get(Calendar.YEAR) + "");
+            mouth.setText(calendar.get(Calendar.MONTH) + "");
+            day.setText(calendar.get(Calendar.DAY_OF_MONTH) + "月");
+            hour.setText(calendar.get(Calendar.HOUR) + ":" + calendar.get(Calendar.MINUTE));
+            amOrPm.setText(calendar.get(Calendar.AM_PM) == 1 ? "pm" : "am");
+            backupContactsNo.setText(String.format("可还原联系人:%d", version.getCount()));
             return convertView;
         }
     }
