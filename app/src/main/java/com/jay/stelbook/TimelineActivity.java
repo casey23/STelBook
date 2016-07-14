@@ -2,6 +2,7 @@ package com.jay.stelbook;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,13 +13,16 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.jay.javaBean.Contacts;
 import com.jay.javaBean.Version;
 import com.jay.util.PhoneUtil;
 import com.jay.util.ViewHolder;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -107,6 +111,19 @@ public class TimelineActivity extends Activity {
     }
 
     /**
+     * 传递信息到通讯录（自定义通讯录）
+     *
+     * @param list 联系人列表
+     */
+    private void showContactsData(List<Contacts> list) {
+        Intent intent = new Intent();
+        intent.setClass(this, ContactsActivity.class);
+        intent.putExtra("Contacts", (ArrayList<Contacts>) list);
+        startActivity(intent);
+        finish();
+    }
+
+    /**
      * 显示加载的信息到界面上
      */
     private void showLoadData() {
@@ -180,7 +197,7 @@ public class TimelineActivity extends Activity {
             }
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(date);
-            //...............................
+            //设置时间信息
             year.setText(calendar.get(Calendar.YEAR) + "");
             mouthAndDay.setText((calendar.get(Calendar.MONTH) + 1) + "." + calendar.get(Calendar.DAY_OF_MONTH));
             hour.setText(calendar.get(Calendar.HOUR) + ":" + calendar.get(Calendar.MINUTE));
@@ -189,9 +206,27 @@ public class TimelineActivity extends Activity {
             return convertView;
         }
 
+        //listview的Item被点击相应事件，点击加载对应版本的联系人信息，然后跳转到显示联系人信息界面
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+            Version version = mVersionList.get(position);
+            //显示进度框
+            mProDialog.show();
+            BmobQuery<Contacts> query = new BmobQuery<>();
+            query.addWhereEqualTo("versionid", version.getObjectId());
+            query.setLimit(1000);
+            query.findObjects(new FindListener<Contacts>() {
+                @Override
+                public void done(List<Contacts> list, BmobException e) {
+                    //获取成功
+                    if (e == null && list != null) {
+                        showContactsData(list);
+                    } else {
+                        Toast.makeText(TimelineActivity.this, "获取联系人信息失败！", Toast.LENGTH_SHORT).show();
+                    }
+                    mProDialog.cancel();
+                }
+            });
         }
     }
 }
