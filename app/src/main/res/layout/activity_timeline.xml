@@ -35,7 +35,7 @@
         android:background="#7271dc"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingLeft="10dp">
+        android:paddingLeft="30dp">
 
         <ImageView
             android:layout_width="45dp"
