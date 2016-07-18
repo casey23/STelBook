@@ -114,11 +114,13 @@ public class TimelineActivity extends Activity {
      * 传递信息到通讯录（自定义通讯录）
      *
      * @param list 联系人列表
+     * @param version
      */
-    private void showContactsData(List<Contacts> list) {
+    private void showContactsData(List<Contacts> list, Version version) {
         Intent intent = new Intent();
         intent.setClass(this, ContactsActivity.class);
         intent.putExtra("Contacts", (ArrayList<Contacts>) list);
+        intent.putExtra("Version",version);
         startActivity(intent);
         finish();
     }
@@ -209,7 +211,7 @@ public class TimelineActivity extends Activity {
         //listview的Item被点击相应事件，点击加载对应版本的联系人信息，然后跳转到显示联系人信息界面
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            Version version = mVersionList.get(position);
+            final Version version = mVersionList.get(position);
             //显示进度框
             mProDialog.show();
             BmobQuery<Contacts> query = new BmobQuery<>();
@@ -220,7 +222,7 @@ public class TimelineActivity extends Activity {
                 public void done(List<Contacts> list, BmobException e) {
                     //获取成功
                     if (e == null && list != null) {
-                        showContactsData(list);
+                        showContactsData(list,version);
                     } else {
                         Toast.makeText(TimelineActivity.this, "获取联系人信息失败！", Toast.LENGTH_SHORT).show();
                     }

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#f8f8f8"
+    android:divider="@drawable/divider_line"
+    android:orientation="vertical"
+    android:showDividers="middle">
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="20dp"
+        android:text="陈兵"
+        android:textSize="20sp" />
+
+
+    <TextView
+        android:id="@+id/call"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/register_btn_selector"
+        android:gravity="left"
+        android:padding="14dp"
+        android:text="拨打电话"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/sendMsg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/register_btn_selector"
+        android:gravity="left"
+        android:padding="14dp"
+        android:text="发送短信"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/del"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/register_btn_selector"
+        android:gravity="left"
+        android:padding="14dp"
+        android:text="删除"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/restore"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/register_btn_selector"
+        android:gravity="left"
+        android:padding="14dp"
+        android:text="还原"
+        android:textSize="16sp" />
+</LinearLayout>

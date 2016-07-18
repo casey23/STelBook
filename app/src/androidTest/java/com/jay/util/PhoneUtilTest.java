@@ -2,15 +2,6 @@ package com.jay.util;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
-import android.util.Log;
-
-import com.jay.javaBean.Version;
-
-import java.util.List;
-
-import cn.bmob.v3.BmobQuery;
-import cn.bmob.v3.exception.BmobException;
-import cn.bmob.v3.listener.FindListener;
 
 /**
  * 电话簿工具类测试用例
@@ -36,15 +27,15 @@ public class PhoneUtilTest extends ApplicationTestCase<Application> {
     }
 
     public void testGetAllVersion() throws Exception {
-        Version version = new Version();
-        BmobQuery<Version> query = new BmobQuery<>();
-        query.findObjects(new FindListener<Version>() {
-            @Override
-            public void done(List<Version> list, BmobException e) {
-                Log.i("ttt", list.size() + "返回总数");
-                //assertNotNull(list);
-                assertSame(list.size(),0);
-            }
-        });
+//        Version version = new Version();
+//        BmobQuery<Version> query = new BmobQuery<>();
+//        query.findObjects(new FindListener<Version>() {
+//            @Override
+//            public void done(List<Version> list, BmobException e) {
+//                Log.i("ttt", list.size() + "返回总数");
+//                //assertNotNull(list);
+//                assertSame(list.size(),0);
+//            }
+//        });
     }
 }

@@ -114,6 +114,7 @@ public class IndexView extends View {
 
             @Override
             public void onAnimationEnd(Animator animation) {
+                //如果悬浮窗显示，则销毁
                 if (Alive) {
                     Alive = false;
                     windowManager.removeViewImmediate(mIndexWindow);
@@ -132,6 +133,7 @@ public class IndexView extends View {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
+        //如果悬浮窗显示，则销毁
         if (Alive) {
             Alive = false;
             windowManager.removeViewImmediate(mIndexWindow);
