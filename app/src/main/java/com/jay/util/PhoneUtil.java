@@ -16,12 +16,15 @@
 package com.jay.util;
 
 import android.Manifest;
+import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.OperationApplicationException;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.RemoteException;
 import android.provider.ContactsContract;
 import android.support.v4.app.ActivityCompat;
 
@@ -38,6 +41,31 @@ import cn.bmob.v3.BmobObject;
  * @author jingle1267@163.com
  */
 public final class PhoneUtil {
+    /**
+     * Use a simple string represents the long.
+     */
+    private static final String COLUMN_CONTACT_ID =
+            ContactsContract.Data.CONTACT_ID;
+    private static final String COLUMN_RAW_CONTACT_ID =
+            ContactsContract.Data.RAW_CONTACT_ID;
+    private static final String COLUMN_MIMETYPE =
+            ContactsContract.Data.MIMETYPE;
+    private static final String COLUMN_NAME =
+            ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME;
+    private static final String COLUMN_NUMBER =
+            ContactsContract.CommonDataKinds.Phone.NUMBER;
+    private static final String COLUMN_NUMBER_TYPE =
+            ContactsContract.CommonDataKinds.Phone.TYPE;
+    private static final String COLUMN_EMAIL =
+            ContactsContract.CommonDataKinds.Email.DATA;
+    private static final String COLUMN_EMAIL_TYPE =
+            ContactsContract.CommonDataKinds.Email.TYPE;
+    private static final String MIMETYPE_STRING_NAME =
+            ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE;
+    private static final String MIMETYPE_STRING_PHONE =
+            ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE;
+    private static final String MIMETYPE_STRING_EMAIL =
+            ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE;
 
     /**
      * Don't let anyone instantiate this class.
@@ -136,4 +164,144 @@ public final class PhoneUtil {
         return count;
     }
 
+
+    /**
+     * 批量写入联系人到通讯录
+     *
+     * @param context      上下文对象
+     * @param contactsList 待写入的联系人
+     * @throws RemoteException
+     * @throws OperationApplicationException
+     */
+    public static void insertContacts(Context context, List<Contacts> contactsList) throws RemoteException, OperationApplicationException {
+        for (Contacts contacts : contactsList) {
+            PhoneUtil.addContact(context, contacts);
+        }
+        //联系人不存在
+//        Uri uri = Uri.parse("content://com.android.contacts/raw_contacts");
+//        ContentResolver resolver = context.getContentResolver();
+//        ArrayList<ContentProviderOperation> operations = new ArrayList<ContentProviderOperation>();
+//        ContentProviderOperation op1 = ContentProviderOperation.newInsert(uri)
+//                .withValue("account_name", null)
+//                .build();
+//        operations.add(op1);
+//
+//        uri = Uri.parse("content://com.android.contacts/data");
+//        for (Contacts contacts : contactsList) {
+//            //添加姓名
+//            ContentProviderOperation op2 = ContentProviderOperation.newInsert(uri)
+//                    .withValueBackReference("raw_contact_id", 0)
+//                    .withValue("mimetype", "vnd.android.cursor.item/name")
+//                    .withValue("data2", contacts.getName())
+//                    .build();
+//            operations.add(op2);
+//            //添加电话号码
+//            ArrayList<String> stringArrayList = contacts.getTel();
+//            for (String tel : stringArrayList) {
+//                ContentProviderOperation op3 = ContentProviderOperation.newInsert(uri)
+//                        .withValueBackReference("raw_contact_id", 0)
+//                        .withValue("mimetype", "vnd.android.cursor.item/phone_v2")
+//                        .withValue("data1", tel)
+//                        .withValue("data2", "2")
+//                        .build();
+//                operations.add(op3);
+//            }
+//        }
+//        resolver.applyBatch("com.android.contacts", operations);
+    }
+
+    /**
+     * 获取联系人Id（根据姓名）
+     *
+     * @param context  上下文对象
+     * @param contacts 待搜索的联系人
+     * @return 联系人id，如果联系人不存在返回“0”
+     */
+    public static String getContactID(Context context, Contacts contacts) {
+        ContentResolver resolver = context.getContentResolver();
+        String id = "0";
+        Cursor cursor = resolver.query(
+                android.provider.ContactsContract.Contacts.CONTENT_URI,
+                new String[]{android.provider.ContactsContract.Contacts._ID},
+                android.provider.ContactsContract.Contacts.DISPLAY_NAME +
+                        "='" + contacts.getName() + "'", null, null);
+        if (cursor != null && cursor.moveToNext()) {
+            id = cursor.getString(cursor.getColumnIndex(
+                    android.provider.ContactsContract.Contacts._ID));
+        }
+        if (cursor != null)
+            cursor.close();
+        return id;
+    }
+
+    /**
+     * 添加联系人，如果联系人不存在则插入联系人,若果联系人存在则删除联系人再插入
+     *
+     * @param context
+     * @param contacts
+     * @throws RemoteException
+     * @throws OperationApplicationException
+     */
+    public static void addContact(Context context, Contacts contacts) throws RemoteException, OperationApplicationException {
+        ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
+
+        String id = getContactID(context, contacts);
+        if (!id.equals("0")) {
+            //联系人已经存在
+            PhoneUtil.deleteContact(context, contacts);
+        }
+        //联系人不存在
+        Uri uri = Uri.parse("content://com.android.contacts/raw_contacts");
+        ContentResolver resolver = context.getContentResolver();
+        ArrayList<ContentProviderOperation> operations = new ArrayList<ContentProviderOperation>();
+        ContentProviderOperation op1 = ContentProviderOperation.newInsert(uri)
+                .withValue("account_name", null)
+                .build();
+        operations.add(op1);
+
+        uri = Uri.parse("content://com.android.contacts/data");
+        //添加姓名
+        ContentProviderOperation op2 = ContentProviderOperation.newInsert(uri)
+                .withValueBackReference("raw_contact_id", 0)
+                .withValue("mimetype", "vnd.android.cursor.item/name")
+                .withValue("data2", contacts.getName())
+                .build();
+        operations.add(op2);
+        //添加电话号码
+        ArrayList<String> stringArrayList = contacts.getTel();
+        for (String tel : stringArrayList) {
+            ContentProviderOperation op3 = ContentProviderOperation.newInsert(uri)
+                    .withValueBackReference("raw_contact_id", 0)
+                    .withValue("mimetype", "vnd.android.cursor.item/phone_v2")
+                    .withValue("data1", tel)
+                    .withValue("data2", "2")
+                    .build();
+            operations.add(op3);
+        }
+        resolver.applyBatch("com.android.contacts", operations);
+    }
+
+
+    /**
+     * 删除联系人
+     *
+     * @param context  上下文对象
+     * @param contacts 待删除的联系人
+     * @throws RemoteException
+     * @throws OperationApplicationException
+     */
+    public static void deleteContact(Context context, Contacts contacts) throws RemoteException, OperationApplicationException {
+        ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
+        String id = PhoneUtil.getContactID(context, contacts);
+        //delete contact
+        ops.add(ContentProviderOperation.newDelete(ContactsContract.RawContacts.CONTENT_URI)
+                .withSelection(ContactsContract.RawContacts.CONTACT_ID + "=" + id, null)
+                .build());
+        //delete contact information such as phone number,email
+        ops.add(ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
+                .withSelection(COLUMN_CONTACT_ID + "=" + id, null)
+                .build());
+        ContentResolver resolver = context.getContentResolver();
+        resolver.applyBatch(ContactsContract.AUTHORITY, ops);
+    }
 }

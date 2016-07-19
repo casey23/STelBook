@@ -42,7 +42,8 @@
         android:hint="搜索联系人"
         android:padding="5dp"
         android:textColor="#464a4a"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:visibility="gone" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -63,6 +64,7 @@
             android:id="@+id/contactsIndex"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_alignParentRight="true" />
+            android:layout_alignParentRight="true"
+            android:visibility="gone" />
     </RelativeLayout>
 </LinearLayout>

@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jay.CustomView.IndexView;
 import com.jay.CustomView.SuperEditText;
@@ -227,6 +228,12 @@ public class ContactsActivity extends Activity {
                     break;
                 //还原联系人
                 case R.id.restore:
+                    try {
+                        PhoneUtil.addContact(mContext, contacts);
+                        Toast.makeText(mContext, "还原一个联系人", Toast.LENGTH_SHORT).show();
+                    } catch (Exception e) {
+                        Toast.makeText(mContext, "还原失败", Toast.LENGTH_SHORT).show();
+                    }
                     break;
                 //删除联系人
                 case R.id.del:
@@ -242,6 +249,9 @@ public class ContactsActivity extends Activity {
          * @param contacts
          */
         private void delContacts(Contacts contacts) {
+            mContactsList.remove(contacts);
+            this.notifyDataSetChanged();
+            Toast.makeText(mContext, "删除了一个联系人", Toast.LENGTH_SHORT).show();
             //删除成功，对应版本里面的备份数量-1
             contacts.delete(new UpdateListener() {
                 @Override
